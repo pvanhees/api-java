@@ -1,0 +1,7 @@
+External libraries included in this package:
+* JSON simple
+* Apache HTTP Core
+* Apache HTTP Client
+* Commons Logging
+
+Please check the corresponding jar files for the license of these libraries.
