@@ -1,6 +1,12 @@
 n-Auth Java API
 ===============
 
+### Downloading the repository
+
+Download the ZIP from https://github.com/n-Auth/api-java/archive/master.zip or clone the git repository:
+
+git clone https://github.com/n-Auth/api-java/
+
 ### Structure of this package:
 * src/* : Source of the nAuth JAVA API
 * lib/* : support libraries (logging, http client and json)
