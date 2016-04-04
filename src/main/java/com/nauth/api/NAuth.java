@@ -105,12 +105,18 @@ public class NAuth {
 	private String $loginqrdata = null;
 	private String $hsid = null;
 	
+	public NAuth(String serverid, String apikey,boolean useSSL){
+		setServerid(serverid);
+		setApikey(apikey);
+		
+		backend = new NAuthBackend(useSSL);
+	}
 	
 	public NAuth(String serverid, String apikey){
 		setServerid(serverid);
 		setApikey(apikey);
 		
-		backend = new NAuthBackend(true);
+		backend = new NAuthBackend(false);
 	}
 	
 	protected String serverGet(String method, String[] queryParts, Map<String,String> params){
@@ -133,7 +139,7 @@ public class NAuth {
 	
 	private Map<String,String> getHeaders(){
 		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("apikey", getApikey());
+		headers.put("X-ApiKey", getApikey());
 		return headers;
 	}
  	
