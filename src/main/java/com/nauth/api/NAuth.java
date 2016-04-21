@@ -1,11 +1,14 @@
 package com.nauth.api;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.istack.internal.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.omg.CORBA.Request;
 
 public class NAuth {
 	public String getServeruri() {
@@ -31,7 +34,7 @@ public class NAuth {
 	public String getId() {
 		return sid;
 	}
-	
+
 	public String getHashId(){
 		if($hsid == null){
 			login_forcecheck();
@@ -96,7 +99,7 @@ public class NAuth {
 	private String wsuri;
 	private String fallbackwsuri;
 
-		
+
 	/* temporary caching */
 	private String $userid;
 	private String $userpk;
@@ -104,63 +107,63 @@ public class NAuth {
 	private Boolean $canprovoke = null;
 	private String $loginqrdata = null;
 	private String $hsid = null;
-	
+
 	public NAuth(String serverid, String apikey,boolean useSSL){
 		setServerid(serverid);
 		setApikey(apikey);
-		
+
 		backend = new NAuthBackend(useSSL);
 	}
-	
+
 	public NAuth(String serverid, String apikey){
 		setServerid(serverid);
 		setApikey(apikey);
-		
+
 		backend = new NAuthBackend(false);
 	}
-	
+
 	protected String serverGet(String method, String[] queryParts, Map<String,String> params){
 		return backend.getHttpAsString(method, getServeruri(),queryParts,params,getHeaders());
 	}
-	
+
 	protected byte [] serverGetBytes(String method, String[] queryParts, Map<String,String> params){
 		return backend.getHttpAsBytes(method, getServeruri(),queryParts,params,getHeaders());
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Logout the current NAuth session
 	 */
 	public void logout(){
-		
+
 		serverGet("POST", new String[] {"servers",getServerid(),"sessions",getId(),"logout"}, null);
 	}
-	
+
 	private Map<String,String> getHeaders(){
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("X-ApiKey", getApikey());
 		return headers;
 	}
- 	
+
 	private JSONObject sessionCheck(){
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("realm", getRealm());
-		
+
 		JSONParser parser = new JSONParser();
 		try {
-			return (JSONObject) parser.parse(serverGet("GET", 
+			return (JSONObject) parser.parse(serverGet("GET",
 					new String[]{"servers",getServerid(),"sessions",getId()}, params));
 		} catch (ParseException e) {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Check if the user is logged in.
-	 * Note that this method might used a cached result. 
+	 * Note that this method might used a cached result.
 	 * Caching happens automatically in an NAuth object, but are not stored in the session or shared otherwise over multiple requests.
-	 * 
+	 *
 	 * @return boolean True if the user is logged in through NAuth
 	 */
 	public boolean login(){
@@ -170,7 +173,7 @@ public class NAuth {
 			return $loggedin;
 		}
 	}
-	
+
 	/**
 	 * Check if the user is logged in.
 	 * This method never uses caching and has an impact on performance.
@@ -179,7 +182,7 @@ public class NAuth {
 	 */
 	public boolean login_forcecheck() {
 		$loggedin = false;
-		
+
 		JSONObject loginData = sessionCheck();
 		if(((Boolean) loginData.get("loggedin")) != false){
 			$userpk  = (String) loginData.get("pk");
@@ -196,29 +199,29 @@ public class NAuth {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Register a userId for the currently logged in session
-	 * 
+	 *
 	 * @param string $userid Userid
 	 * @return boolean True on success
 	 */
 	public boolean registerUser(String userid){
 		if(!login())
 			return false;
-		
+
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("realm", getRealm());
 		params.put("userid", userid);
-		
+
 		serverGet("POST",
 				new String[]{"servers",getServerid(),"sessions",getId(),"registeruser"}, params);
 		return true;
 	}
-	
+
 	/**
 	 * Get the userid of the currently logged in user.
-	 * 
+	 *
 	 * @return string The userid or false on failure.
 	 */
 	public String getUserId(){
@@ -226,19 +229,19 @@ public class NAuth {
 			return $userid;
 		return null;
 	}
-	
+
 	/**
 	 * Synonym for login()
-	 * 
+	 *
 	 * @return boolean True if the user is logged in through NAuth
 	 */
 	public boolean loggedin(){
 		return login();
 	}
-	
+
 	/**
 	 * Get the public key of the currently logged in user
-	 * 
+	 *
 	 * @return string Base64 encoded public key
 	 */
 	public String getUserpk() {
@@ -246,10 +249,10 @@ public class NAuth {
 			return $userpk;
 		return null;
 	}
-	
+
 	/**
 	 * Return the raw data that is usually represented in a visual code for login/enrol.
-	 * 
+	 *
 	 * @param string $type Type of code (either "LOGIN" or "ENROL")
 	 * @param string $name Display name to register for the user (only for ENROL)
 	 * @param string $userid Userid to register for the user (only for ENROL)
@@ -260,7 +263,7 @@ public class NAuth {
 	public String getbase64qrcodedata(String type, String name){
 		return getbase64qrcodedata(type,name,"");
 	}
-	
+
 	public String getbase64qrcodedata(String type, String name, String userid) {
 		/* caching is enabled for LOGIN code (this is already passed when doing a validate */
 		if("LOGIN".equals(type)){
@@ -269,47 +272,50 @@ public class NAuth {
 			} else {
 				login_forcecheck();
 				return $loginqrdata;
-			} 
+			}
 		}
-		
+
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("realm", getRealm());
 		params.put("userid", userid);
 		params.put("type", type);
 		params.put("name", name);
-		
+
 		return serverGet("GET", new String[]{"servers",getServerid(),"sessions",getId(),"qr"}, params);
 	}
-	
-	
+
+
 	/**
-	 * Returns a PNG image of the visual login/enrol code 
-	 * 
-	 * @param string $type		Type of code (either "LOGIN" or "ENROL")
-	 * @param string $imgtype	Type of image (either "nauth" or "qr")
+	 * Returns a PNG image of the visual login/enrol code
+	 *
+	 * @param string $requestType		Type of code (either RequestType.LOGIN or RequestType.REGISTER)
+	 * @param string $imgtype	Type of image (either ImageType.NAUTH or ImageType.QR)
 	 * @param number $size		Size of the image in pixels
 	 * @param string $name		Display name to register for the user (only for ENROL)
 	 * @param string $userid	Userid to register for the user (only for ENROL)
 	 * @return Raw PNG data
 	 */
-	public byte [] getqrcodeimgdata(String type, String imgtype, int size, String name, String userid) {
-		if(!"nauth".equals(imgtype) && !"qr".equals(imgtype))
-			imgtype = "qr";
-		
-		Map<String, String> params = new HashMap<String, String>();
+	public byte [] getqrcodeimgdata(RequestType requestType, ImageType imgtype, int size, String name, String userid) {
+		String type = null;
+		if(imgtype == null)
+			imgtype = ImageType.QR;
+		if(requestType != null)
+			type = requestType.toString();
+
+		Map<String, String> params = new HashMap<>();
 		params.put("realm", getRealm());
 		params.put("userid", userid);
 		params.put("type", type);
 		params.put("name", name);
 		params.put("s", ""+size);
-		params.put("img",imgtype);
-		
+		params.put("img", imgtype.toString());
+
 		return serverGetBytes("GET", new String[]{"servers",getServerid(),"sessions",getId(),"qr"}, params);
 	}
-	public byte [] getqrcodeimgdata(String type, String imgtype, int size) {
-		return getqrcodeimgdata(type, imgtype, size, "","");
+	public byte [] getqrcodeimgdata(RequestType requestType, ImageType imgtype, int size) {
+		return getqrcodeimgdata(requestType, imgtype, size, "","");
 	}
-	
+
 	/**
 	 * Provoke a login for the current user
 	 * @return boolean True on success
@@ -327,10 +333,10 @@ public class NAuth {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Check if a login can be provoked from the server
-	 * 
+	 *
 	 * @return boolean True if provoke is possible
 	 */
 	public boolean canProvoke() {
@@ -341,17 +347,17 @@ public class NAuth {
 			return $canprovoke;
 		}
 	}
-	
+
 	/**
 	 * Create a new transaction with the specified message
-	 * 
+	 *
 	 * @param string $msg 	Message for the transaction
 	 * @return string 		Base64 encoded transaction identifier
 	 */
 	public String createTransaction(String msg){
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("msg", msg);
-		
+
 		String result  = serverGet("POST",new String[]{"servers",getServerid(),"sessions",getId(),"transactions"}, params);
 		JSONParser parser = new JSONParser();
 		try {
@@ -360,7 +366,7 @@ public class NAuth {
 			if(ret == true){
 				return (String) obj.get("tid");
 			}
-			
+
 			return null;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -368,10 +374,10 @@ public class NAuth {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Check the status of the transaction
-	 * 
+	 *
 	 * @param string $tid	Base64 encoded transaction identifier
 	 * @return 		0 for new transaction, 1 for approved transaction, 2 for declined transactions or null if the transaction does not exist
 	 */
@@ -384,7 +390,7 @@ public class NAuth {
 			if(ret == true){
 				return (Integer) obj.get("tstatus");
 			}
-			
+
 			return null;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -392,10 +398,10 @@ public class NAuth {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Return the javascript code needed to setup the websocket
-	 * 
+	 *
 	 */
 	public String wsinit(){
 		//return "nauthwsinit('".htmlspecialchars($this->serverid)."','".base64_encode($this->getid())."',".
