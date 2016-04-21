@@ -288,8 +288,8 @@ public class NAuth {
 	/**
 	 * Returns a PNG image of the visual login/enrol code
 	 *
-	 * @param string $requestType		Type of code (either RequestType.LOGIN or RequestType.REGISTER)
-	 * @param string $imgtype	Type of image (either ImageType.NAUTH or ImageType.QR)
+	 * @param RequestType $requestType		Type of code
+	 * @param ImageType $imgtype	Type of image
 	 * @param number $size		Size of the image in pixels
 	 * @param string $name		Display name to register for the user (only for ENROL)
 	 * @param string $userid	Userid to register for the user (only for ENROL)
