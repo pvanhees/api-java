@@ -1,14 +1,11 @@
 package com.nauth.api;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.sun.istack.internal.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.omg.CORBA.Request;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class NAuth {
 	public String getServeruri() {
