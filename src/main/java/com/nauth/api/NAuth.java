@@ -3,6 +3,7 @@ package com.nauth.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -367,6 +368,67 @@ public class NAuth {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	/**
+	 * Get all accounts of the specified user
+	 * 
+	 * @param string $userid Userid
+	 * @return JSONArray array of JSONObject's containing account data
+	 */
+	public JSONArray getUser(String userid){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("realm", getRealm());
+		
+		String data = serverGet("GET",
+				new String[]{"servers",getServerid(),"users",userid}, params);
+		
+		JSONParser jsonParser = new JSONParser();
+		try {
+			return (JSONArray) jsonParser.parse(data);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get all accounts of the specified user
+	 * 
+	 * @param string $userid Userid
+	 * @return JSONArray array of JSONObject's containing account data
+	 */
+	public JSONArray getUsers(){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("realm", getRealm());
+		
+		String data = serverGet("GET",
+				new String[]{"servers",getServerid(),"users"}, params);
+		
+		JSONParser jsonParser = new JSONParser();
+		try {
+			return (JSONArray) jsonParser.parse(data);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Get all accounts of the specified user
+	 * 
+	 * @param string $userid Userid
+	 * @return JSONArray array of JSONObject's containing account data
+	 */
+	public void blockUser(String userid, boolean blocked){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("realm", getRealm());
+		params.put("blocked", blocked?"true":"false");
+		
+		serverGet("PUT",
+				new String[]{"servers",getServerid(),"users",userid}, params);
 	}
 	
 	/**
