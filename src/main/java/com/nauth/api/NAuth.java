@@ -16,17 +16,17 @@ public class NAuth {
     private final String realm;
 
 
-    public NAuth(String serverURI, String serverId, String apiKey, boolean useSSL) {
+    public NAuth(String serverURI, String serverId, String apiKey, String realm, boolean useSSL) {
         this.serverURI = serverURI;
         this.serverId = serverId;
         this.apiKey = apiKey;
-        this.realm = "realm";
+        this.realm = realm;
 
         backend = new NAuthBackend(useSSL);
     }
 
-    public NAuth(String serverURI, String serverId, String apiKey) {
-        this(serverURI, serverId, apiKey, false);
+    public NAuth(String serverURI, String serverId, String apiKey, String realm) {
+        this(serverURI, serverId, apiKey, realm, false);
     }
 
     private String serverGet(String method, String[] queryParts, Map<String, String> params) {
@@ -66,6 +66,7 @@ public class NAuth {
 
     /**
      * Fetches either the information about the logged in user or the QR code to login
+     *
      * @return @see com.nauth.api.LoginInformation object that contains information about the login
      */
     public LoginInformation tryLogin(String sessionId) {
@@ -76,7 +77,8 @@ public class NAuth {
                 (Boolean) loginData.get("canprovoke"),
                 (String) loginData.get("userid"),
                 (String) loginData.get("loginqrdata"),
-                (String) loginData.get("pk")
+                (String) loginData.get("pk"),
+                (String) loginData.get("hsid")
         );
     }
 
@@ -185,8 +187,8 @@ public class NAuth {
 
     private List<NAuthAccount> convertToAccounts(JSONArray accounts) {
         List<NAuthAccount> nAuthAccounts = new ArrayList<>();
-        for(int i = 0; i < accounts.size(); i++) {
-            nAuthAccounts.add(convertToAccount((JSONObject)accounts.get(i)));
+        for (int i = 0; i < accounts.size(); i++) {
+            nAuthAccounts.add(convertToAccount((JSONObject) accounts.get(i)));
         }
         return nAuthAccounts;
     }

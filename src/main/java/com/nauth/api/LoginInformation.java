@@ -10,13 +10,15 @@ public class LoginInformation {
     private String userId;
     private String loginImage;
     private String publicKey;
+    private String hashedSessionId;
 
-    public LoginInformation(boolean loggedIn, boolean canProvoke, String userId, String loginImage, String publicKey) {
+    public LoginInformation(boolean loggedIn, boolean canProvoke, String userId, String loginImage, String publicKey, String hashedSessionId) {
         this.loggedIn = loggedIn;
         this.canProvoke = canProvoke;
         this.userId = userId;
         this.loginImage = loginImage;
         this.publicKey = publicKey;
+        this.hashedSessionId = hashedSessionId;
     }
 
     public boolean isLoggedIn() {
@@ -37,5 +39,9 @@ public class LoginInformation {
 
     public String getPublicKey() {
         return publicKey;
+    }
+
+    public String getHashedSessionId() {
+        return hashedSessionId;
     }
 }
