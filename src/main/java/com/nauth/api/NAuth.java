@@ -15,7 +15,6 @@ public class NAuth {
     private final NAuthBackend backend;
     private final String realm;
 
-
     public NAuth(String serverURI, String serverId, String apiKey, String realm, boolean useSSL) {
         this.serverURI = serverURI;
         this.serverId = serverId;
@@ -200,7 +199,7 @@ public class NAuth {
                 (Boolean) account.get("publicKeyTransRevoked"),
                 (String) account.get("description"),
                 new Date((Long) account.get("lastlogin")),
-                new Date((Long) account.get("creation")),
+                new Date((Long) account.get("created")),
                 (Boolean) account.get("blocked")
         );
     }
@@ -297,17 +296,5 @@ public class NAuth {
      */
     public byte[] getVashImage() {
         return serverGetBytes("GET", new String[]{"servers", serverId, "vash"}, new HashMap<>());
-    }
-
-    public String getServerId() {
-        return serverId;
-    }
-
-    public String getServerURI() {
-        return serverURI;
-    }
-
-    public String getRealm() {
-        return realm;
     }
 }
