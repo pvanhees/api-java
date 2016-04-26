@@ -6,15 +6,15 @@ package com.nauth.api;
 public class LoginInformation {
 
     private boolean loggedIn;
-    private boolean canProvoke;
+    private boolean isProvokable;
     private String userId;
     private String loginImage;
     private String publicKey;
     private String hashedSessionId;
 
-    public LoginInformation(boolean loggedIn, boolean canProvoke, String userId, String loginImage, String publicKey, String hashedSessionId) {
+    public LoginInformation(boolean loggedIn, boolean isProvokable, String userId, String loginImage, String publicKey, String hashedSessionId) {
         this.loggedIn = loggedIn;
-        this.canProvoke = canProvoke;
+        this.isProvokable = isProvokable;
         this.userId = userId;
         this.loginImage = loginImage;
         this.publicKey = publicKey;
@@ -25,8 +25,8 @@ public class LoginInformation {
         return loggedIn;
     }
 
-    public boolean isCanProvoke() {
-        return canProvoke;
+    public boolean isProvokable() {
+        return isProvokable;
     }
 
     public String getUserId() {
