@@ -4,14 +4,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class NAuth {
-
-    private final static Logger logger = LoggerFactory.getLogger(NAuth.class);
 
     private final String serverURI;
     private final String serverId;
@@ -301,5 +297,17 @@ public class NAuth {
      */
     public byte[] getVashImage() {
         return serverGetBytes("GET", new String[]{"servers", serverId, "vash"}, new HashMap<>());
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public String getServerURI() {
+        return serverURI;
+    }
+
+    public String getRealm() {
+        return realm;
     }
 }
