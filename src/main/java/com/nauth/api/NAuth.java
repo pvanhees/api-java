@@ -180,11 +180,13 @@ public class NAuth {
             return convertToAccounts(accounts);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 
     private List<NAuthAccount> convertToAccounts(JSONArray accounts) {
+        if(accounts == null) return new ArrayList<>();
+
         List<NAuthAccount> nAuthAccounts = new ArrayList<>();
         for (int i = 0; i < accounts.size(); i++) {
             nAuthAccounts.add(convertToAccount((JSONObject) accounts.get(i)));
@@ -220,7 +222,7 @@ public class NAuth {
             return (JSONArray) jsonParser.parse(data);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new JSONArray();
         }
     }
 

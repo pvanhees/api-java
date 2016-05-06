@@ -210,6 +210,7 @@ public class NAuthBackend {
 System.out.println(data);
 			return data;
 		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		} 
 	}
