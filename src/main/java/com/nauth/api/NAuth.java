@@ -185,7 +185,7 @@ public class NAuth {
     }
 
     private List<NAuthAccount> convertToAccounts(JSONArray accounts) {
-        if(accounts == null) return new ArrayList<>();
+        if (accounts == null) return new ArrayList<>();
 
         List<NAuthAccount> nAuthAccounts = new ArrayList<>();
         for (int i = 0; i < accounts.size(); i++) {
@@ -232,12 +232,24 @@ public class NAuth {
      * @param userid Userid
      * @return true if the action was successful
      */
-    public void blockUser(String userid, boolean blocked) {
+    public void blockAccount(String userid, boolean blocked) {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
         params.put("blocked", blocked ? "true" : "false");
 
         serverGet("PUT", new String[]{"servers", serverId, "users", userid}, params);
+    }
+
+    /**
+     * Delete account with given accountId.
+     *
+     * @param accountId The id of the account that is to be deleted
+     */
+    public void deleteAccount(String accountId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("realm", realm);
+
+        serverGet("DELETE", new String[]{"servers", serverId, "accounts", accountId}, params);
     }
 
     /**
