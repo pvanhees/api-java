@@ -232,12 +232,13 @@ public class NAuth {
      * @param userid Userid
      * @return true if the action was successful
      */
-    public void blockAccount(String userid, boolean blocked) {
+    public boolean blockAccount(String userid, boolean blocked) {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
         params.put("blocked", blocked ? "true" : "false");
 
         serverGet("PUT", new String[]{"servers", serverId, "users", userid}, params);
+        return true;
     }
 
     /**
@@ -245,11 +246,12 @@ public class NAuth {
      *
      * @param accountId The id of the account that is to be deleted
      */
-    public void deleteAccount(String accountId) {
+    public boolean deleteAccount(Long accountId) {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
 
-        serverGet("DELETE", new String[]{"servers", serverId, "accounts", accountId}, params);
+        serverGet("DELETE", new String[]{"servers", serverId, "accounts", String.valueOf(accountId)}, params);
+        return true;
     }
 
     /**
