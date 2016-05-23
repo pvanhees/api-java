@@ -3,7 +3,6 @@ package com.nauth.api;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class NAuth {
         try {
             return (JSONObject) parser.parse(serverGet("GET",
                     new String[]{"servers", serverId, "sessions", sessionId}, params));
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -156,7 +155,7 @@ public class NAuth {
             JSONObject obj = (JSONObject) parser.parse(result);
             Boolean ret = (Boolean) obj.get("result");
             return ret;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -178,7 +177,7 @@ public class NAuth {
         try {
             JSONArray accounts = (JSONArray) jsonParser.parse(data);
             return convertToAccounts(accounts);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -220,7 +219,7 @@ public class NAuth {
         JSONParser jsonParser = new JSONParser();
         try {
             return (JSONArray) jsonParser.parse(data);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new JSONArray();
         }
@@ -275,7 +274,7 @@ public class NAuth {
             }
 
             return null;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -299,7 +298,7 @@ public class NAuth {
             }
 
             return null;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
