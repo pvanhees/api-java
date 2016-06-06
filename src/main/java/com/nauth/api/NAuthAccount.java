@@ -52,4 +52,25 @@ public class NAuthAccount {
     public boolean isBlocked() {
         return blocked;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final NAuthAccount that = (NAuthAccount) o;
+
+        if (!id.equals(that.id)) return false;
+        if (!description.equals(that.description)) return false;
+        return creationDate.equals(that.creationDate);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + creationDate.hashCode();
+        return result;
+    }
 }

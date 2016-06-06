@@ -3,7 +3,6 @@ package com.nauth.api;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class NAuth {
         try {
             return (JSONObject) parser.parse(serverGet("GET",
                     new String[]{"servers", serverId, "sessions", sessionId}, params));
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -156,7 +155,7 @@ public class NAuth {
             JSONObject obj = (JSONObject) parser.parse(result);
             Boolean ret = (Boolean) obj.get("result");
             return ret;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -178,14 +177,14 @@ public class NAuth {
         try {
             JSONArray accounts = (JSONArray) jsonParser.parse(data);
             return convertToAccounts(accounts);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
 
     private List<NAuthAccount> convertToAccounts(JSONArray accounts) {
-        if(accounts == null) return new ArrayList<>();
+        if (accounts == null) return new ArrayList<>();
 
         List<NAuthAccount> nAuthAccounts = new ArrayList<>();
         for (int i = 0; i < accounts.size(); i++) {
@@ -220,7 +219,7 @@ public class NAuth {
         JSONParser jsonParser = new JSONParser();
         try {
             return (JSONArray) jsonParser.parse(data);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new JSONArray();
         }
@@ -232,12 +231,26 @@ public class NAuth {
      * @param userid Userid
      * @return true if the action was successful
      */
-    public void blockUser(String userid, boolean blocked) {
+    public boolean blockAccount(String userid, boolean blocked) {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
         params.put("blocked", blocked ? "true" : "false");
 
         serverGet("PUT", new String[]{"servers", serverId, "users", userid}, params);
+        return true;
+    }
+
+    /**
+     * Delete account with given accountId.
+     *
+     * @param accountId The id of the account that is to be deleted
+     */
+    public boolean deleteAccount(Long accountId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("realm", realm);
+
+        serverGet("DELETE", new String[]{"servers", serverId, "accounts", String.valueOf(accountId)}, params);
+        return true;
     }
 
     /**
@@ -261,7 +274,7 @@ public class NAuth {
             }
 
             return null;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -285,7 +298,7 @@ public class NAuth {
             }
 
             return null;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
