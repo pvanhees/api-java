@@ -29,7 +29,8 @@ public class NAuthBackend {
     protected boolean certpinning;
     private SSLConnectionSocketFactory sslsf;
 
-    private static final String PK = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuJlaS3XZdRpcT/uek5nxX4iqn/7As1BY2VACO8wSM3m7VG6iN/Py2jTguIfVJcQhtk1sy7elG0AXDKO3peWc+of4pHTpQ9kaFcvFisi6uDcDWAIJMjiSE2iAm8veZ+5LddqDD/iItRYul4mFsKIl8Q6DKBvKkHjn3tXC2g3bvvsY689qbH7FhKpueGx8Z+yKvV209FGSkFKI+sGOB/C4OeF/KX3FTw/gMMD0YrS2skV+lg3jGTNzNep7Gfhuz4j4CrKXx67p7x3EV8m2kDDIQMwWi/rxSJ2V/0sKbUebnsozUDpWi1blRJjtSW27tFVxrffXWrpw4O5HxEcMtB65RQIDAQAB";
+//    private static final String PK = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuJlaS3XZdRpcT/uek5nxX4iqn/7As1BY2VACO8wSM3m7VG6iN/Py2jTguIfVJcQhtk1sy7elG0AXDKO3peWc+of4pHTpQ9kaFcvFisi6uDcDWAIJMjiSE2iAm8veZ+5LddqDD/iItRYul4mFsKIl8Q6DKBvKkHjn3tXC2g3bvvsY689qbH7FhKpueGx8Z+yKvV209FGSkFKI+sGOB/C4OeF/KX3FTw/gMMD0YrS2skV+lg3jGTNzNep7Gfhuz4j4CrKXx67p7x3EV8m2kDDIQMwWi/rxSJ2V/0sKbUebnsozUDpWi1blRJjtSW27tFVxrffXWrpw4O5HxEcMtB65RQIDAQAB";
+    private static final String PK = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApQulGscxGg1VrIfKapCD6yXI8OKewbJgW78JkBn2su962zAZKaDnwUyR6jmat8frYpCfFBUS9heIhBgQP76aSXOejnVTt5/DKzGT8Z4lGPEyhJmj6LSeeOR5jk/dYE40B3/drvW8gY5pLSUqsE5sXcA46gwkoVsFXkqj61Bpi4EXkFEtSK909pX7nfBLq0lisbWolKtcFHnu1zMyHN8vVo0qL1920SIgw6odz00bDiDs18Xx/S6P94KcK9XS2fCYmHWGGPERocHx+98p/oj+ZAdByjghoTGac7hWuSkAXPaRgTL/oXIg+3pmltxaejuY65s9se0uW0NFFkDtyob/G/nUDuw+MaceuOjyTrz2FtIWKhDhCbLeAjv67E73XRSnSZPY+ZXUoz2YrRUOcQmxHpfLGrRhFbxb+dnjIklxopJw+d1K/RM84/Wp2iHq/mqLsVVFuEEdgR2FBBUFkKlGITpdTppP0kPxAjnQalQjb7xmQGYPBuXeQxoHg5Sx8/wXTJS12R0igSnBmigsNsFZHVN8n7jE/wPmOhqkkXR2hLowdi/9TW7pMxL7xRTv3zCQ3H7QGvvAmN3r9MvV8MH83BZp7Hw6NDtReNvHfH8rHRQAiHIB2gLj54bc6TT3fwHQN1zprCobYtIZtdSH4+ur8kIOswSDonsHdGpwLvBsui0CAwEAAQ==";
 
     public NAuthBackend(boolean certpinning) {
         this.certpinning = certpinning;
@@ -47,7 +48,7 @@ public class NAuthBackend {
             SSLParameters params = ctx.getDefaultSSLParameters();
 
 
-            ArrayList<String> ciphers = new ArrayList<String>(
+            ArrayList<String> ciphers = new ArrayList<>(
                     Arrays.asList(params.getCipherSuites()));
             ciphers.retainAll(Arrays.asList(
                     "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA",
@@ -60,22 +61,21 @@ public class NAuthBackend {
             ));
 
 
+//                    new String[]{"TLSv1.2"}, ciphers.toArray(new String[ciphers.size()]), new HostnameVerifier() {
+            final String[] supportedCipherSuites = ciphers.toArray(new String[ciphers.size()]);
+            final String[] supportedProtocols = {"TLSv1.2"};
             sslsf = new SSLConnectionSocketFactory(ctx,
-                    new String[]{"TLSv1.2"}, ciphers.toArray(new String[ciphers.size()]), new HostnameVerifier() {
+                    supportedProtocols, supportedCipherSuites, (hostname, session) -> {
+                        try {
+                            Certificate cert = session.getPeerCertificates()[0];
+                            return PK.equals(Base64.getEncoder().encodeToString(cert.getPublicKey().getEncoded()));
+                        } catch (SSLPeerUnverifiedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            return false;
+                        }
 
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    try {
-                        Certificate cert = session.getPeerCertificates()[0];
-                        return PK.equals(Base64.getEncoder().encodeToString(cert.getPublicKey().getEncoded()));
-                    } catch (SSLPeerUnverifiedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                        return false;
-                    }
-
-                }
-            });
+                    });
 
         } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block

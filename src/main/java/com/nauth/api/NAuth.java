@@ -144,12 +144,51 @@ public class NAuth {
     }
 
     /**
-     * Provoke a login for the current user
+     * Provoke a login on the session
      *
      * @return boolean True on success
      */
     public boolean provokelogin(String sessionId) {
-        String result = serverGet("POST", new String[]{"servers", serverId, "sessions", sessionId, "provokelogin"}, null);
+        String result = serverGet("POST", new String[]{"servers",
+                serverId, "sessions", sessionId, "provokelogin"}, null);
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject obj = (JSONObject) parser.parse(result);
+            Boolean ret = (Boolean) obj.get("result");
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Provoke a login for a specific user
+     *
+     * @return boolean True on success
+     */
+    public boolean provokeloginForUser(String sessionId, String userid) {
+        String result = serverGet("POST", new String[]{"servers",
+                serverId, "users", userid, "provokelogin", sessionId}, null);
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject obj = (JSONObject) parser.parse(result);
+            Boolean ret = (Boolean) obj.get("result");
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Provoke a login for a specific account.
+     *
+     * @return boolean True on success
+     */
+    public boolean provokeloginOnAccount(String sessionId, String accountid) {
+        String result = serverGet("POST", new String[]{"servers",
+                serverId, "accounts", accountid, "provokelogin", sessionId}, null);
         JSONParser parser = new JSONParser();
         try {
             JSONObject obj = (JSONObject) parser.parse(result);
