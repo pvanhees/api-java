@@ -14,24 +14,27 @@ public class NAuth {
     private final NAuthBackend backend;
     private final String realm;
 
-    public NAuth(String serverURI, String serverId, String apiKey, String realm, boolean useSSL) {
+    public NAuth(String serverURI, String serverId, String apiKey, String realm, boolean useSSL, String pk, List<String> ciphers) throws NAuthServerException {
         this.serverURI = serverURI;
         this.serverId = serverId;
         this.apiKey = apiKey;
         this.realm = realm;
 
-        backend = new NAuthBackend(useSSL);
+        if(useSSL)
+        	backend = new NAuthBackend(pk, ciphers);
+        else
+        	backend = new NAuthBackend();
     }
 
-    public NAuth(String serverURI, String serverId, String apiKey, String realm) {
-        this(serverURI, serverId, apiKey, realm, false);
+    public NAuth(String serverURI, String serverId, String apiKey, String realm) throws NAuthServerException {
+        this(serverURI, serverId, apiKey, realm, false, null, null);
     }
 
-    private String serverGet(String method, String[] queryParts, Map<String, String> params) {
+    private String serverGet(String method, String[] queryParts, Map<String, String> params) throws NAuthServerException {
         return backend.getHttpAsString(method, serverURI, queryParts, params, getHeaders());
     }
 
-    private byte[] serverGetBytes(String method, String[] queryParts, Map<String, String> params) {
+    private byte[] serverGetBytes(String method, String[] queryParts, Map<String, String> params) throws NAuthServerException {
         return backend.getHttpAsBytes(method, serverURI, queryParts, params, getHeaders());
     }
 
@@ -39,7 +42,7 @@ public class NAuth {
     /**
      * Logout the current NAuth session
      */
-    public void logout(String sessionId) {
+    public void logout(String sessionId) throws NAuthServerException {
         serverGet("POST", new String[]{"servers", serverId, "sessions", sessionId, "logout"}, null);
     }
 
@@ -86,7 +89,7 @@ public class NAuth {
      * @param userId
      * @return boolean True on success
      */
-    public boolean registerUser(String sessionId, String userId) {
+    public boolean registerUser(String sessionId, String userId) throws NAuthServerException {
         if (!tryLogin(sessionId).isLoggedIn())
             return false;
 
@@ -107,7 +110,7 @@ public class NAuth {
      * @param size      Size of the image in pixels
      * @return Raw PNG data
      */
-    public byte[] getLoginImage(String sessionId, ImageType imgtype, int size) {
+    public byte[] getLoginImage(String sessionId, ImageType imgtype, int size) throws NAuthServerException {
         if (imgtype == null)
             imgtype = ImageType.QR;
 
@@ -131,7 +134,7 @@ public class NAuth {
      * @param size      Size of the image in pixels
      * @return Raw PNG data
      */
-    public byte[] getRegisterImage(String sessionId, String userId, String name, int size) {
+    public byte[] getRegisterImage(String sessionId, String userId, String name, int size) throws NAuthServerException{
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
         params.put("userid", userId);
@@ -144,51 +147,12 @@ public class NAuth {
     }
 
     /**
-     * Provoke a login on the session
+     * Provoke a login for the current user
      *
      * @return boolean True on success
      */
-    public boolean provokelogin(String sessionId) {
-        String result = serverGet("POST", new String[]{"servers",
-                serverId, "sessions", sessionId, "provokelogin"}, null);
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject obj = (JSONObject) parser.parse(result);
-            Boolean ret = (Boolean) obj.get("result");
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Provoke a login for a specific user
-     *
-     * @return boolean True on success
-     */
-    public boolean provokeloginForUser(String sessionId, String userid) {
-        String result = serverGet("POST", new String[]{"servers",
-                serverId, "users", userid, "provokelogin", sessionId}, null);
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject obj = (JSONObject) parser.parse(result);
-            Boolean ret = (Boolean) obj.get("result");
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Provoke a login for a specific account.
-     *
-     * @return boolean True on success
-     */
-    public boolean provokeloginOnAccount(String sessionId, String accountid) {
-        String result = serverGet("POST", new String[]{"servers",
-                serverId, "accounts", accountid, "provokelogin", sessionId}, null);
+    public boolean provokelogin(String sessionId) throws NAuthServerException{
+        String result = serverGet("POST", new String[]{"servers", serverId, "sessions", sessionId, "provokelogin"}, null);
         JSONParser parser = new JSONParser();
         try {
             JSONObject obj = (JSONObject) parser.parse(result);
@@ -206,7 +170,7 @@ public class NAuth {
      * @param userid Userid
      * @return JSONArray array of JSONObject's containing account data
      */
-    public List<NAuthAccount> getUserAccountsFor(String userid) {
+    public List<NAuthAccount> getUserAccountsFor(String userid) throws NAuthServerException{
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
 
@@ -249,7 +213,7 @@ public class NAuth {
      *
      * @return JSONArray array of JSONObject's containing account data
      */
-    public JSONArray getUsers() {
+    public JSONArray getUsers() throws NAuthServerException {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
 
@@ -270,7 +234,7 @@ public class NAuth {
      * @param userid Userid
      * @return true if the action was successful
      */
-    public boolean blockAccount(String userid, boolean blocked) {
+    public boolean blockAccount(String userid, boolean blocked) throws NAuthServerException {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
         params.put("blocked", blocked ? "true" : "false");
@@ -284,7 +248,7 @@ public class NAuth {
      *
      * @param accountId The id of the account that is to be deleted
      */
-    public boolean deleteAccount(Long accountId) {
+    public boolean deleteAccount(Long accountId) throws NAuthServerException {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
 
@@ -299,7 +263,7 @@ public class NAuth {
      * @param msg       Message for the transaction
      * @return Base64 encoded transaction identifier
      */
-    public String createTransaction(String sessionId, String msg) {
+    public String createTransaction(String sessionId, String msg) throws NAuthServerException {
         Map<String, String> params = new HashMap<>();
         params.put("msg", msg);
 
@@ -326,7 +290,7 @@ public class NAuth {
      * @param transactionId Base64 encoded transaction identifier
      * @return 0 for new transaction, 1 for approved transaction, 2 for declined transactions or null if the transaction does not exist
      */
-    public Integer checkTransaction(String sessionId, String transactionId) {
+    public Integer checkTransaction(String sessionId, String transactionId) throws NAuthServerException {
         String result = serverGet("GET", new String[]{"servers", serverId, "sessions", sessionId, "transactions", transactionId}, null);
         JSONParser parser = new JSONParser();
         try {
@@ -348,7 +312,7 @@ public class NAuth {
      *
      * @return The raw png data that is the visual hash of the server
      */
-    public byte[] getVashImage() {
+    public byte[] getVashImage() throws NAuthServerException {
         return serverGetBytes("GET", new String[]{"servers", serverId, "vash"}, new HashMap<>());
     }
 }
