@@ -3,6 +3,7 @@ package com.nauth.api;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
@@ -52,7 +53,7 @@ public class NAuth {
         return headers;
     }
 
-    private JSONObject sessionCheck(final String sessionId) {
+    private JSONObject sessionCheck(final String sessionId) throws NAuthServerException {
         Map<String, String> params = new HashMap<>();
         params.put("realm", realm);
 
@@ -60,7 +61,8 @@ public class NAuth {
         try {
             return (JSONObject) parser.parse(serverGet("GET",
                     new String[]{"servers", serverId, "sessions", sessionId}, params));
-        } catch (Exception e) {
+        } catch (ParseException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -70,7 +72,7 @@ public class NAuth {
      *
      * @return @see com.nauth.api.LoginInformation object that contains information about the login
      */
-    public LoginInformation tryLogin(String sessionId) {
+    public LoginInformation tryLogin(String sessionId) throws NAuthServerException {
         JSONObject loginData = sessionCheck(sessionId);
         if (loginData == null) return null;
         return new LoginInformation(
