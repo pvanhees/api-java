@@ -153,8 +153,45 @@ public class NAuth {
      *
      * @return boolean True on success
      */
-    public boolean provokelogin(String sessionId) throws NAuthServerException{
+    public boolean provokeloginOnSession(String sessionId) throws NAuthServerException{
         String result = serverGet("POST", new String[]{"servers", serverId, "sessions", sessionId, "provokelogin"}, null);
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject obj = (JSONObject) parser.parse(result);
+            Boolean ret = (Boolean) obj.get("result");
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Provoke a login for the current user
+     *
+     * @return boolean True on success
+     */
+    public boolean provokeloginOnAccount(String sessionId, String accountId) throws NAuthServerException{
+        String result = serverGet("POST", new String[]{"servers", serverId, "accounts", accountId, "provokelogin", sessionId, "provokelogin"}, null);
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject obj = (JSONObject) parser.parse(result);
+            Boolean ret = (Boolean) obj.get("result");
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    /**
+     * Provoke a login for the current user
+     *
+     * @return boolean True on success
+     */
+    public boolean provokeloginOnUser(String sessionId, String userId) throws NAuthServerException{
+        String result = serverGet("POST", new String[]{"servers", serverId, "users", userId, "provokelogin", sessionId, "provokelogin"}, null);
         JSONParser parser = new JSONParser();
         try {
             JSONObject obj = (JSONObject) parser.parse(result);
