@@ -11,7 +11,7 @@
 
     <scm>
         <url>scm:git:https://github.com/pvanhees/api-java.git</url>
-        <connection>scm:https://github.com/pvanhees/api-java.git</connection>
+        <connection>scm:git:https://github.com/pvanhees/api-java.git</connection>
     </scm>
 
     <build>
