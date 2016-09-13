@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/pvanhees/api-java.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:pvanhees/api-java.git</developerConnection>
     </scm>
 
     <dependencies>
