@@ -1,6 +1,6 @@
 n-Auth Java API
 ===============
-[![Build Status](https://travis-ci.org/n-Auth/api-java.svg?branch=master)](https://travis-ci.org/n-Auth/api-java)
+[![Build Status](https://travis-ci.org/pvanhees/api-java.svg?branch=master)](https://travis-ci.org/n-Auth/api-java)
 
 ### Downloading the repository
 
