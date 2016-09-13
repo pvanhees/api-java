@@ -7,13 +7,8 @@
     <groupId>com.nauth.api</groupId>
     <name>n-Auth: Java API</name>
     <artifactId>nauth-java</artifactId>
-    <version>1.0-LATEST-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-
-    <scm>
-        <url>scm:git:git@github.com/pvanhees/api-java.git</url>
-        <connection>scm:git:git@github.com/pvanhees/api-java.git</connection>
-    </scm>
 
     <build>
         <plugins>
