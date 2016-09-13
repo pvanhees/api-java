@@ -7,7 +7,7 @@
     <groupId>com.nauth.api</groupId>
     <name>n-Auth: Java API</name>
     <artifactId>nauth-java</artifactId>
-    <version>1.0.1</version>
+    <version>0.9.0</version>
     <packaging>jar</packaging>
 
     <dependencies>
