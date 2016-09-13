@@ -10,8 +10,8 @@
     <packaging>jar</packaging>
 
     <scm>
-        <url>scm:git:git@github.com/pvanhees/api-java.git</url>
-        <connection>scm:git:git@github.com/pvanhees/api-java.git</connection>
+        <url>scm:git@github.com/pvanhees/api-java.git</url>
+        <connection>scm:git@github.com/pvanhees/api-java.git</connection>
     </scm>
 
     <build>
